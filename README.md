@@ -45,7 +45,7 @@ Mini library backend service with Django
 5. go to your project directory and install requirement.txt
 
    ```shell
-   pip install requirement.txt
+   pip install -r requirement.txt
    ```
    
 6. run docker compose
