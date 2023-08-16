@@ -65,7 +65,7 @@ def api_return_book(request):
 
     for book_id in valid_data.get('books', []):
         user = User.objects.get(username=valid_data.get('username'))
-        borrow_data = BorrowedBook.objects.get(user=user, book_id=book_id, returned_date__isnull=True)
+        borrow_data = BorrowedBook.objects.filter(user=user, book_id=book_id, returned_date__isnull=True).first()
         borrow_data.returned_date = datetime.now()
         borrow_data.save()
 

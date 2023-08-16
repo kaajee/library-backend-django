@@ -160,3 +160,7 @@ Mini library backend service with Django
    TOTAL                                     502     10    98%
    ```
    
+### Postman
+<hr>
+
+You can try API with postman by import the [collection](Library.postman_collection.json) and [environment](Library.postman_environment.json) file

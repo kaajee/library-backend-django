@@ -70,8 +70,16 @@ class ReturnSerializer(serializers.Serializer):
             if not exist_book:
                 raise serializers.ValidationError(f"Invalid book identifier {book}, not registered")
 
-            exist_borrow = BorrowedBook.objects.filter(book_id=book, returned_date__isnull=True).first()
+        return value
+
+    def validate(self, data):
+        username = data.get('username')
+        books = data.get('books', [])
+
+        for book in books:
+            exist_borrow = BorrowedBook.objects.filter(user__username=username, book_id=book,
+                                                       returned_date__isnull=True).first()
             if not exist_borrow:
                 raise serializers.ValidationError(f"Book identifier {book}, is not borrowed")
 
-        return value
+        return data
