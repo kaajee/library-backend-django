@@ -16,22 +16,24 @@ def api_user_registration(request):
     serializer = RegistrationSerializer(data=request.data)
     if serializer.is_valid():
         validated_data = serializer.validated_data
-        user = User.objects.create_user(
-            username=validated_data.get('username'),
-            password=validated_data.get('password')
-        )
 
-        LibraryUser.objects.create(
-            user=user,
-            is_student=validated_data.get('role') == 'student',
-            is_librarian=validated_data.get('role') == 'librarian'
-        )
+        exist_user = User.objects.filter(username=validated_data.get('username')).first()
+        if exist_user is None:
+            exist_user = User.objects.create_user(
+                username=validated_data.get('username'),
+                password=validated_data.get('password')
+            )
 
-        token = Token.objects.create(user=user)
+            LibraryUser.objects.create(
+                user=exist_user,
+                is_student=validated_data.get('role') == 'student',
+                is_librarian=validated_data.get('role') == 'librarian'
+            )
+
+        token, _ = Token.objects.get_or_create(user=exist_user)
         response_data = {
             "token": str(token)
         }
-
         return Response(response_data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -45,7 +47,7 @@ def api_user_login(request):
                             password=serializer.validated_data.get('password'))
         if user:
             login(request, user)
-            token = Token.objects.get_or_create(user=user)
+            token, _ = Token.objects.get_or_create(user=user)
             return Response({'token': str(token)}, status=status.HTTP_200_OK)
         else:
             return Response({'message': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)

@@ -65,6 +65,20 @@ Mini library backend service with Django
    python3 manage.py runserver
    ```
 
+9. create dummy users for testing. default password is `password123`
+   ```shell
+   python3 manage.py generate_users
+   ```
+   | Username   | Role      |
+   |------------|-----------|
+   | student1   | student   |
+   | librarian1 | librarian |
+
+10. create dummy books for testing
+   ```shell
+   python3 manage.py generate_books
+   ```
+
 ### Run The Test and Coverage
 <hr>
 

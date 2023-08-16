@@ -13,19 +13,34 @@ fake = Faker()
 class TestIam(APILiveServerTestCase):
 
     def test_register_student(self):
-        response = self.client.post(
-            reverse('api-user-registration'),
-            data={
-                'username': fake.user_name(),
-                'password': fake.password(),
-                'role': 'student'
-            }
-        )
+        username = fake.user_name()
+        password = fake.password()
 
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(LibraryUser.objects.count(), 1)
-        self.assertEqual(LibraryUser.objects.first().is_student, True)
-        self.assertEqual(LibraryUser.objects.first().is_librarian, False)
+        with self.subTest('Success'):
+            response = self.client.post(
+                reverse('api-user-registration'),
+                data={
+                    'username': username,
+                    'password': password,
+                    'role': 'student'
+                }
+            )
+
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+            self.assertEqual(LibraryUser.objects.count(), 1)
+            self.assertEqual(LibraryUser.objects.first().is_student, True)
+            self.assertEqual(LibraryUser.objects.first().is_librarian, False)
+
+        with self.subTest('Duplicate register'):
+            response2 = self.client.post(
+                reverse('api-user-registration'),
+                data={
+                    'username': username,
+                    'password': password,
+                    'role': 'student'
+                }
+            )
+            self.assertEqual(response2.status_code, status.HTTP_201_CREATED)
 
     def test_register_librarian(self):
 
